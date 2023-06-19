@@ -9,6 +9,7 @@ void OpcClient::start()
 {
     qDebug() << "start client";
     QOpcUaProvider provider;
+    QOpcUaUserTokenPolicy s;
     if (provider.availableBackends().isEmpty())
         return;
     QOpcUaClient *client = provider.createClient(provider.availableBackends()[0]);
@@ -19,10 +20,9 @@ void OpcClient::start()
         qDebug() << "Client state changed:" << state;
         if (state == QOpcUaClient::ClientState::Connected) {
             QOpcUaNode *node = client->node("ns=1;s=temperature1");
-            qDebug()<< node->valueAttribute();
+            qDebug() << node->allBaseAttributes();
         }
     });
-
     QObject::connect(client, &QOpcUaClient::endpointsRequestFinished,
                      [client](QVector<QOpcUaEndpointDescription> endpoints) {
                          qDebug() << "Endpoints returned:" << endpoints.count();
@@ -30,11 +30,5 @@ void OpcClient::start()
                              client->connectToEndpoint(endpoints.first()); // Connect to the first endpoint in the list
                      });
 
-    client->requestEndpoints(QUrl("opc.tcp://127.0.0.1:12345")); // Request a list of endpoints from the server
-}
-
-void OpcClient::connectionState(QOpcUaClient::ClientState)
-{
-    m_state = QOpcUaClient::ClientState();
-    qDebug() << "Connection State: " << m_state;
+    client->requestEndpoints(QUrl("opc.tcp://127.0.0.1:12345"));
 }

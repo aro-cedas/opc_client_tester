@@ -11,12 +11,10 @@ public:
     OpcClient();
     void start();
 public slots:
-    void connectionState(QOpcUaClient::ClientState);
 
 private:
     QString m_state;
-//    QOpcUaClient client;
-//    QOpcUaNode node;
+
 };
 
 #endif // OPCCLIENT_H
